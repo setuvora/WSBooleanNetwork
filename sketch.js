@@ -15,7 +15,7 @@ var shiftRange = count/2; var index;
 
 function setup() {
   createCanvas(600, 600);
-  frameRate(5);
+  frameRate(10);
   background(255);
 
 	slider = createSlider(0.6, 1, -1, 0.0005); 
