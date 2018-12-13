@@ -15,7 +15,7 @@ var shiftRange = count/2; var index;
 
 function setup() {
   createCanvas(600, 600);
-  frameRate(15);
+  frameRate(5);
   background(255);
 
 	slider = createSlider(0.6, 1, -1, 0.0005); 
@@ -28,8 +28,8 @@ function setup() {
 	sliderLabel2 = createElement('h2', 'Global');
 	sliderLabel2.position(slider.x+157, slider.y-21);	 
   
-  label = createElement('h2', 'Click on a Node')
-  label.position(slider.x, slider.y-75);
+  	label = createElement('h2', 'Click on a Node')
+  	label.position(slider.x, slider.y-75);
 	
 	button1 = createButton('-Rewire-');
   	button1.position(slider.x+45, slider.y+25);
@@ -175,7 +175,7 @@ function Module(_xOffset, _yOffset, _nodeID, _sign, _node1, _eSign1, _node2, _eS
 
   }    
 
-//initial wiring of network
+//initial wiring of network - each node connected to 4 of its closest neighbors
 Module.prototype.drawEdges = function(){
 this.diameter = unit/2;
 
@@ -233,7 +233,8 @@ Module.prototype.recordEffectors = function() {
   effectors3[this.nodeNum] = this.effectorNode_3;
   effectors4[this.nodeNum] = this.effectorNode_4;
 }
-
+//randshift gets the nodes and their edges to jiggle
+//node color is set according to activation status
 Module.prototype.display = function() {   
 randShiftX = random(-unit/55, unit/55);
 randShiftY = random(-unit/55, unit/55);
@@ -241,7 +242,7 @@ randShiftY = random(-unit/55, unit/55);
    stroke(0, 0, 0);
    strokeWeight(this.diameter/50);
    ellipse(this.xPos+randShiftX, this.yPos+randShiftY, this.diameter, this.diameter);   
-//change node color based on activation, node edge based on activation or inhibition   
+//edge signs are color-coded as well (blue = -->, red = --|)
    if (this.effectorSign_1>0)
    {
     stroke('blue');  
@@ -255,8 +256,7 @@ randShiftY = random(-unit/55, unit/55);
      stroke('red');
      strokeWeight(this.diameter/30);
        line(this.xPos+randShiftX, this.yPos+randShiftY, this.effectorNode_1.yPos);
-         ellipse(this.xPos+randShiftX, this.yPos+randShiftY, this.diameter/10, this.diameter/10);
-         
+         ellipse(this.xPos+randShiftX, this.yPos+randShiftY, this.diameter/10, this.diameter/10);     
        }
        
     if (this.effectorSign_2>0)
@@ -302,14 +302,17 @@ randShiftY = random(-unit/55, unit/55);
        }
  fill(0, 0, 0); 
 }
- 
+//record the temporary state of each node in order to update the network asynchronously
+// if we have the following network: [a-->b-->c] 
+// and we activate a, during the next timestep both b and c will be active
+// depending on the order in which their values are updated.
+// asynchronous updating allows visualization of stepwise network dynamics (eg. A_b_c -> A_B_c -> A_B_C)
 Module.prototype.tempState = function(){
   this.s1 = this.s;
   }
 
 //updating fucntion to allow each node to activate or inhibit during the next time
 //step according the states of all its input nodes
-
 Module.prototype.update = function(){
 
 if((this.effectorNode_1.s1 * this.effectorSign_1) + (this.effectorNode_2.s1 * this.effectorSign_2) + (this.effectorNode_3.s1 * this.effectorSign_3) + (this.effectorNode_4.s1 * this.effectorSign_4) > 0) 
