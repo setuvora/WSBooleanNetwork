@@ -15,7 +15,7 @@ var shiftRange = count/2; var index;
 
 function setup() {
   createCanvas(600, 600);
-  frameRate(10);
+  frameRate(15);
   background(255);
 
 	slider = createSlider(0.6, 1, -1, 0.0005); 
@@ -236,8 +236,8 @@ Module.prototype.recordEffectors = function() {
 //randshift gets the nodes and their edges to jiggle
 //node color is set according to activation status
 Module.prototype.display = function() {   
-randShiftX = random(-unit/55, unit/55);
-randShiftY = random(-unit/55, unit/55);
+randShiftX = random(-unit/65, unit/65);
+randShiftY = random(-unit/65, unit/65);
    fill(250*this.s, 250*this.s, 0);
    stroke(0, 0, 0);
    strokeWeight(this.diameter/50);
