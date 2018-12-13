@@ -19,14 +19,14 @@ function setup() {
   background(255);
 
 	slider = createSlider(0.6, 1, -1, 0.0005); 
-    slider.position(120, 100);	
-	  slider.style('width', '150px');
+	slider.position(120, 100);	
+	slider.style('width', '150px');
 
 	sliderLabel = createElement('h2', 'Local');
-	  sliderLabel.position(slider.x-62, slider.y-21);	 
+	sliderLabel.position(slider.x-62, slider.y-21);	 
 
 	sliderLabel2 = createElement('h2', 'Global');
-	  sliderLabel2.position(slider.x+157, slider.y-21);	 
+	sliderLabel2.position(slider.x+157, slider.y-21);	 
   
   label = createElement('h2', 'Click on a Node')
   label.position(slider.x, slider.y-75);
@@ -36,28 +36,27 @@ function setup() {
   	button1.mousePressed(makeGraph);   
 	
 	button2 = createButton('All Nodes ON');
-    button2.position(slider.x+30, slider.y+75);
+   	button2.position(slider.x+30, slider.y+75);
   	button2.mousePressed(allNodesON); 
-
-
-
+//unit and count scale the node sizes and spread to the number of nodes according to canvas size
+//and was adapted from https://processing.org/examples/arrayobjects.html
   unit = 60;
   count = (width / unit) * (height / unit);
   cx = width/2;
   cy = height/2;
+//rad sets up nodes to be positioned in a circle
   rad = TWO_PI/count;
   r = width/2-width/24;
   
   shiftRange = count/2;
 
-  //var g = slider2.value();
+//radial shift randomly spreads the nodes out so they don't overlap
   for (var z = 0; z<shiftRange; z++){
       radialShiftFactor[z] = h;
       h = h - 0.7/shiftRange;
       }
   for (var n = 0; n<count; n++){
       shiftSelect[n] = int(random(radialShiftFactor.length));
-      //radialShiftFactor.length-1));
       }
   reset();
     
@@ -65,9 +64,7 @@ function setup() {
 
 function reset(){
  var index = 0;
-  //unit = input.value();//25;//int(slider2.value());
-  //diameter = slider2.value();
- 
+//create an array of node objects
 	for (var y = 0; y < count; y++) {
   		var shift = radialShiftFactor[shiftSelect[y]];
   		var xPos1 = cx + ((shift*r)*cos(rad*index));
@@ -82,7 +79,6 @@ function reset(){
                     	unit/2, 0); 
       		index++;
 	  			}
-  //pRewire++;
    }
 
 function makeGraph() {
@@ -93,7 +89,6 @@ for (var j=0; j<mods.length; j++){
   mods[j].recordEffectors();
   mods[j].s = 0;
        }
-  //sortEffectors();
 }    
 
 function draw() {
@@ -113,8 +108,6 @@ background(255);
 if(slider.value() != pRewire){	
 	pRewire = slider.value();
   makeGraph();
-  //sortEffectors();
-  //reset();
 	}
 }
 
@@ -182,6 +175,7 @@ function Module(_xOffset, _yOffset, _nodeID, _sign, _node1, _eSign1, _node2, _eS
 
   }    
 
+//initial wiring of network
 Module.prototype.drawEdges = function(){
 this.diameter = unit/2;
 
@@ -215,6 +209,7 @@ if(this.nodeNum==0){
                              }          
 }
 
+//rewiring of network according to probability specified by the slider (from 'local' -> 'global')
 Module.prototype.rewireEdges = function(){
   var pRewire = 1.6-slider.value();
   if(random(1)>pRewire){
@@ -246,21 +241,7 @@ randShiftY = random(-unit/55, unit/55);
    stroke(0, 0, 0);
    strokeWeight(this.diameter/50);
    ellipse(this.xPos+randShiftX, this.yPos+randShiftY, this.diameter, this.diameter);   
-      
-/*for(r=0; r<3; r++)
-{
-      if(this.effectorSign_[r]>0){
-           strokeWeight(this.diameter/30);
-           line(this.xPos, this.yPos, this.effectorNode_[r].xPos, this.effectorNode_[r].yPos);
-
-      } else {
-           stroke('red');
-     strokeWeight(this.diameter/30);
-       line(this.xPos, this.yPos, this.effectorNode_[r].xPos, this.effectorNode_[r].yPos);
-         ellipse(this.xPos, this.yPos, this.diameter/10, this.diameter/10);
-        }
-}*/
-   
+//change node color based on activation, node edge based on activation or inhibition   
    if (this.effectorSign_1>0)
    {
     stroke('blue');  
@@ -325,7 +306,10 @@ randShiftY = random(-unit/55, unit/55);
 Module.prototype.tempState = function(){
   this.s1 = this.s;
   }
- 
+
+//updating fucntion to allow each node to activate or inhibit during the next time
+//step according the states of all its input nodes
+
 Module.prototype.update = function(){
 
 if((this.effectorNode_1.s1 * this.effectorSign_1) + (this.effectorNode_2.s1 * this.effectorSign_2) + (this.effectorNode_3.s1 * this.effectorSign_3) + (this.effectorNode_4.s1 * this.effectorSign_4) > 0) 
@@ -340,14 +324,14 @@ if((this.effectorNode_1.s1 * this.effectorSign_1) + (this.effectorNode_2.s1 * th
       {
     this.s = this.s1;
       }
-
+//make active nodes bigger
 if(this.s == 1){
     this.diameter = (unit/2)+10;
    } else {
     this.diameter = unit/2;
    }
 
-
+//rewire the graph to get a new network
 function reWire() {
 
 for (var j=0; j<mods.length; j++)   {
