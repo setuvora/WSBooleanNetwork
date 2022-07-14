@@ -1,5 +1,6 @@
-# WS_BooleanNetworks
-This program aims to use p5.js to create interactive boolean Watts-Strogatz networks (first described here: https://www.nature.com/articles/30918).  
+# WS_BooleanNetworks 
+
+This [program](https://setuvora.github.io/WSBooleanNetwork/) uses p5.js to create interactive boolean Watts-Strogatz networks (first described [here](https://www.nature.com/articles/30918))  
 
 The original model involves:
 
